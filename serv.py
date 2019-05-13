@@ -45,27 +45,6 @@ def recvAll(sock, numBytes):
 
 	return recvBuff
 
-def sendAll(sock, numBytes):
-	
-	# Buffer
-	sendBuff = ""
-
-	# Temporary buffer
-	tmpBuff = ""
-
-	# Keep sending until all is sent
-	while len(sendBuff) < numBytes:
-		tmpBuff = sock.send(numBytes)	
-
-		# The other side has closed the socket
-		if not tmpBuff:
-			break
-
-		# Add the sent bytes to the buffer
-		sendBuff += tmpBuff
-
-	return sendBuff
-
 # Accept connection forever
 while True:
 
@@ -76,7 +55,8 @@ while True:
 
 	print "Accepted connection from client: ", addr
 	
-	userResponse = clientSock.recv(1024)
+	userResponse = clientSock.recv(3)
+	
 	if userResponse == "put":
 		# The buffer to all data received from the client.
 		fileData = ""
@@ -104,11 +84,15 @@ while True:
 		clientSock.close()
 
 	elif userResponse == "get":
-		fileData = ""
-		sendBuff = ""
-		fileSize = 0
-		fileSizeBuff = ""
-		fileSizeBuff = sendAll(clientSock, 10)
-		fileSize = int(fileSizeBuff)
-		fileData = sendAll(clientSock, fileSize)
+		data = clientSock.recv(1024)		
+
+		fileName = str(data)
+
+		f = open(fileName, 'r')
+		l = f.read(1024)
+		while True:
+			if data:
+				clientSock.send(l)
+			break
+		f.close()
 		clientSock.close()

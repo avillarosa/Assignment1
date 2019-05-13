@@ -10,8 +10,6 @@ if len(sys.argv) < 3:
 serverHost = sys.argv[1]
 serverPort = int(sys.argv[2])
 
-downloadDir = "/tmp"
-
 # Server Welcome
 print "======================================================================="
 print "Welcome to the FTP server"
@@ -36,7 +34,7 @@ connectionSock.connect((serverHost, serverPort))
 
 while userCommand != "quit":
 	if userCommand == "put":
-		connectionSock.send("put")
+		connectionSock.send(userCommand)
 		# Open the file
 		fileObj = open(fileName, "r")
 
@@ -83,25 +81,17 @@ while userCommand != "quit":
 		fileObj.close()
 
 	elif userCommand == "get":
-		connectionSock.send("get")
-		fileObj = open("new_"+fileName, "rw")
-		numSent = 0
-		fileData = None
-		while True:
-			fileData = fileObj.read(65536)
-			if fileData:
-				dataSizeStr = str(len(fileData))
-				while len(dataSizeStr) < 10:
-					dataSize = "0" + dataSizeStr
-				fileData = dataSizeStr + fileData
-				numSent = 0
-				while len(fileData) > numSent:
-					numSent += connectionSock.recv(fileData[numSent:])
-			else:
-				break
-		connectionSock.close()
-		fileObj.close()
-
+		connectionSock.send(userCommand)
+		connectionSock.send(fileName)
+		
+		with open('received_file.txt', 'wb') as f:
+			while True:
+				data = connectionSock.recv(1024)
+				if not data:
+					break
+				f.write(data)
+		f.close()
+		connectionSock.close() 
 						
 	
 	elif userCommand == "ls":
