@@ -10,6 +10,8 @@ if len(sys.argv) < 3:
 serverHost = sys.argv[1]
 serverPort = int(sys.argv[2])
 
+downloadDir = "/tmp"
+
 # Server Welcome
 print "======================================================================="
 print "Welcome to the FTP server"
@@ -34,7 +36,6 @@ connectionSock.connect((serverHost, serverPort))
 
 while userCommand != "quit":
 	if userCommand == "put":
-
 		connectionSock.send("put")
 		# Open the file
 		fileObj = open(fileName, "r")
@@ -82,24 +83,31 @@ while userCommand != "quit":
 		fileObj.close()
 
 	elif userCommand == "get":
-		"""	
-		connectionSock.send(str(fileName))
-		data = connectionSock.recv(1024)
-		fileSize = long(data[6:])
-		f = open("new_"+fileName, "wb")
-		data = connectionSock.recv(1024)
-		totalRecv = len(data)
-		f.write(data)
-		while totalRecv < fileSize:
-			data = connectionSock.recv(1024)
-			totalRecv += len(data)
-			f.write(data)
+		connectionSock.send("get")
+		fileObj = open("new_"+fileName, "rw")
+		numSent = 0
+		fileData = None
+		while True:
+			fileData = fileObj.read(65536)
+			if fileData:
+				dataSizeStr = str(len(fileData))
+				while len(dataSizeStr) < 10:
+					dataSize = "0" + dataSizeStr
+				fileData = dataSizeStr + fileData
+				numSent = 0
+				while len(fileData) > numSent:
+					numSent += connectionSock.recv(fileData[numSent:])
+			else:
+				break
 		connectionSock.close()
-		print "Download Complete!"
-		"""
+		fileObj.close()
+
+						
+	
 	elif userCommand == "ls":
 		for line in commands.getstatusoutput('ls -l'):
 			print line
+	
 	else:
 		print "\nWrong command. Please enter \'get <FILENAME>\', \'put <FILENAME>\', \'ls\', or \'quit\'\n"
 
@@ -111,6 +119,6 @@ while userCommand != "quit":
 	parseUserInput = userInput.split()
 	userCommand = parseUserInput[0]
 	if len(parseUserInput) == 2:
-		fileName = parseUserInput[1]
+		fileName = str(parseUserInput[1])
 
 print "Exited FTP server"

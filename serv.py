@@ -18,7 +18,7 @@ serverSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverSock.bind((serverHost, serverPort))
 
 # Listen for incoming connections
-serverSock.listen(1)
+serverSock.listen(2)
 
 print serverHost
 
@@ -44,6 +44,27 @@ def recvAll(sock, numBytes):
 		recvBuff += tmpBuff
 
 	return recvBuff
+
+def sendAll(sock, numBytes):
+	
+	# Buffer
+	sendBuff = ""
+
+	# Temporary buffer
+	tmpBuff = ""
+
+	# Keep sending until all is sent
+	while len(sendBuff) < numBytes:
+		tmpBuff = sock.send(numBytes)	
+
+		# The other side has closed the socket
+		if not tmpBuff:
+			break
+
+		# Add the sent bytes to the buffer
+		sendBuff += tmpBuff
+
+	return sendBuff
 
 # Accept connection forever
 while True:
@@ -81,27 +102,13 @@ while True:
 
 		print "FILE DATA: ", fileData
 		clientSock.close()
-		
-	elif userResponse == "get":
-		
-		fileName = clientSock.recv(1024)
-		fileObj = open(fileName, "r")
-		numSent = 0
-		fileData = None
-		while True:
-			fileData = fileObj.read(65536)
-			if fileData:
-				dataSizeStr = str(len(fileData))
-				while len(dataSizeStr) < 10:
-					dataSizeStr = "0" + dataSizeStr
-				fileData = dataSizeStr + fileData
-				numSent = 0
-				while len(fileData) > numSent:
-					numSent += clientSock.send(fileData[numSent:])
-			else:
-				break
-		print "Sent ", numSent, " bytes."
-		fileObj.close()
 
-		# Close client socket
+	elif userResponse == "get":
+		fileData = ""
+		sendBuff = ""
+		fileSize = 0
+		fileSizeBuff = ""
+		fileSizeBuff = sendAll(clientSock, 10)
+		fileSize = int(fileSizeBuff)
+		fileData = sendAll(clientSock, fileSize)
 		clientSock.close()
