@@ -5,7 +5,10 @@ import sys
 if len(sys.argv) < 2:
 	print "USAGE python " + sys.argv[0] + " <PORT NUMBER>"
  
+# The server host
 serverHost = '127.0.0.1'
+
+# Port number from first argument in command line
 serverPort = int(sys.argv[1])
 
 # Create a TCP socket
@@ -14,28 +17,14 @@ serverSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Bind the socket to the port
 serverSock.bind((serverHost, serverPort))
 
-# Start listening for incoming connections
+# Listen for incoming connections
 serverSock.listen(1)
 
 print serverHost
 
-"""
-print "Waiting for connections..."
-
-serverConnection, addr = serverSock.accept()
-print addr, " has connected to the server"
-
-filename = raw_input("ftp> ")
-file = open(filename, 'rb')
-file_data = file.read(1024)
-serverConnection.send(file_data)
-print "Data has been transmitted successfully"
-
-serverSock.close()
-"""
 def recvAll(sock, numBytes):
 
-	# The buffer
+	# Buffer
 	recvBuff = ""
 
 	# Temporary buffer
@@ -56,7 +45,7 @@ def recvAll(sock, numBytes):
 
 	return recvBuff
 
-# Accept connections forever
+# Accept connection forever
 while True:
 
 	print "Waiting for connections..."
@@ -65,7 +54,6 @@ while True:
 	clientSock, addr = serverSock.accept()
 
 	print "Accepted connection from client: ", addr
-	print "\n"
 	
 	# The buffer to all data received from the client.
 	fileData = ""
