@@ -1,5 +1,13 @@
+"""
+Names: Adam Villarosa
+Email: aville@csu.fullerton.edu
+Class: CPSC 471-02
+Language: Python 2.7
+Programming Assignment 1
+"""
 import socket
 import sys
+import commands
 
 # Command line check
 if len(sys.argv) < 2:
@@ -20,7 +28,7 @@ serverSock.bind((serverHost, serverPort))
 # Listen for incoming connections
 serverSock.listen(2)
 
-print serverHost
+print "Server Host:", serverHost
 
 def recvAll(sock, numBytes):
 
@@ -109,3 +117,9 @@ while True:
 		# Closing file and socket
 		f.close()
 		clientSock.close()
+	
+	elif userResponse == "ls":
+
+		print "SUCCESS using \'",userResponse,"\' commands"
+		for line in commands.getstatusoutput('ls -l'):
+			clientSock.send(str(line))

@@ -1,3 +1,10 @@
+"""
+Names: Adam Villarosa
+Email: aville@csu.fullerton.edu
+Class: CPSC 471-02
+Language: Python 2.7
+Programming Assignment 1
+"""
 import socket
 import os
 import sys
@@ -28,12 +35,16 @@ if len(parseUserInput) == 2:
 	fileName = parseUserInput[1]
 
 # Create a TCP socket
-connectionSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#connectionSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Connect to the server
-connectionSock.connect((serverHost, serverPort))
+#connectionSock.connect((serverHost, serverPort))
 
 while userCommand != "quit":
+	
+	connectionSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	connectionSock.connect((serverHost, serverPort))
+	
 	if userCommand == "put":
 		
 		# Sending user command 'put'
@@ -71,8 +82,8 @@ while userCommand != "quit":
 				numbytes = 0
 
 				# Sending data
-				while len(fileData) > numSent:
-					numBytes += connectionSock.send(fileData[numSent:])
+				while len(fileData) > numBytes:
+					numBytes += connectionSock.send(fileData[numBytes:])
 
 			# The file has been read
 			else:
@@ -114,8 +125,12 @@ while userCommand != "quit":
 	
 	# Prints the directory using ls
 	elif userCommand == "ls":
-		for line in commands.getstatusoutput('ls -l'):
-			print line
+		
+		connectionSock.send(userCommand)
+		print connectionSock.recv(1024)
+		
+		# Closing socket
+		connectionSock.close()
 	
 	else:
 		print "\nWrong command. Please enter \'get <FILENAME>\', \'put <FILENAME>\', \'ls\', or \'quit\'\n"
