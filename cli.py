@@ -19,7 +19,7 @@ serverPort = int(sys.argv[2])
 
 # Server Welcome
 print "======================================================================="
-print "Welcome to the FTP server"
+print "Welcome to Adam\'s FTP server"
 print "Commands are \'get <FILENAME>\' to download a file, \'put <FILENAME>\'"
 print "\'ls\' to list the files in the directory, and \'quit\' to exit"
 print "=======================================================================" 
@@ -45,6 +45,7 @@ while userCommand != "quit":
 	connectionSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	connectionSock.connect((serverHost, serverPort))
 	
+	# 'put' command from Assignment1SampleCodes/Python/sendfile/sendfileserv.py
 	if userCommand == "put":
 		
 		# Sending user command 'put'
@@ -96,6 +97,7 @@ while userCommand != "quit":
 		connectionSock.close()
 		fileObj.close()
 	
+	# 'get' downloads a file from the server
 	elif userCommand == "get":
 		
 		# Sending user command 'get'
@@ -123,7 +125,7 @@ while userCommand != "quit":
 		f.close()
 		connectionSock.close() 
 	
-	# Prints the directory using ls
+	# Prints the directory using ls from the server
 	elif userCommand == "ls":
 		
 		connectionSock.send(userCommand)
