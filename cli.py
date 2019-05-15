@@ -79,13 +79,13 @@ while userCommand != "quit":
 		# Close the socket and the file
 		connectionSock.close()
 		fileObj.close()
-
+	
 	elif userCommand == "get":
 		connectionSock.send(userCommand)
 		connectionSock.send(fileName)
 		
 		numBytes = 0	
-		with open('received_'+fileName, 'wb') as f:
+		with open('receieved_'+fileName, 'wb') as f:
 			while True:
 				data = connectionSock.recv(1024)
 				f.write(data)

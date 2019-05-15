@@ -21,7 +21,7 @@ serverSock.bind((serverHost, serverPort))
 serverSock.listen(2)
 
 print serverHost
-"""
+
 def recvAll(sock, numBytes):
 
 	# Buffer
@@ -44,7 +44,7 @@ def recvAll(sock, numBytes):
 		recvBuff += tmpBuff
 
 	return recvBuff
-"""
+
 # Accept connection forever
 while True:
 
@@ -56,7 +56,7 @@ while True:
 	print "Accepted connection from client: ", addr
 	
 	userResponse = clientSock.recv(3)
-	"""	
+	
 	if userResponse == "put":
 		# The buffer to all data received from the client.
 		fileData = ""
@@ -79,16 +79,13 @@ while True:
 
 		# Get the file data
 		fileData = recvAll(clientSock, fileSize)
-
+		
 		print "FILE DATA: ", fileData
-		clientSock.close()
-	"""
-	
-	if userResponse == "put":
 
-		print "SUCCESS using \'",userResponse,"\' command." 
-		data = clientSock.recv(1024)
-		print data
+		with open('sent_data.txt', 'w') as f:
+			f.write(fileData)
+		f.close()
+		clientSock.close()
 
 	elif userResponse == "get":
 
