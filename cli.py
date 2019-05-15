@@ -16,6 +16,7 @@ print "Welcome to the FTP server"
 print "Commands are \'get <FILENAME>\' to download a file, \'put <FILENAME>\'"
 print "\'ls\' to list the files in the directory, and \'quit\' to exit"
 print "=======================================================================" 
+
 # Getting user input
 userInput = raw_input("ftp> ")
 
@@ -34,12 +35,15 @@ connectionSock.connect((serverHost, serverPort))
 
 while userCommand != "quit":
 	if userCommand == "put":
+		
+		# Sending user command 'put'
 		connectionSock.send(userCommand)
+		
 		# Open the file
 		fileObj = open(fileName, "r")
 
 		# Number of bytes sent
-		numSent = 0
+		numBytes = 0
 
 		# File data
 		fileData = None
@@ -64,27 +68,35 @@ while userCommand != "quit":
 				fileData = dataSizeStr + fileData
 
 				# Number of bytes sent
-				numSent = 0
+				numbytes = 0
 
 				# Sending data
 				while len(fileData) > numSent:
-					numSent += connectionSock.send(fileData[numSent:])
+					numBytes += connectionSock.send(fileData[numSent:])
 
 			# The file has been read
 			else:
 				break
 
-		print "Sent ", numSent, " bytes."
+		print "UPLOADED FILE: ", fileName
+		print "NUMBER OF BYTES:", numBytes
 
 		# Close the socket and the file
 		connectionSock.close()
 		fileObj.close()
 	
 	elif userCommand == "get":
+		
+		# Sending user command 'get'
 		connectionSock.send(userCommand)
+
+		# Sending file name
 		connectionSock.send(fileName)
 		
-		numBytes = 0	
+		# Number of bytes
+		numBytes = 0
+		
+		# Opening file, receiving, and writing data
 		with open('receieved_'+fileName, 'wb') as f:
 			while True:
 				data = connectionSock.recv(1024)
@@ -92,12 +104,15 @@ while userCommand != "quit":
 				numBytes += len(data)
 				if not data:
 					break
+		
 		print "DOWNLOADED FILE: ", f,  "."
 		print "NUMBER OF BYTES:", numBytes
+		
+		# Closing file and socket
 		f.close()
 		connectionSock.close() 
-						
 	
+	# Prints the directory using ls
 	elif userCommand == "ls":
 		for line in commands.getstatusoutput('ls -l'):
 			print line

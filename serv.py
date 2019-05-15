@@ -58,6 +58,9 @@ while True:
 	userResponse = clientSock.recv(3)
 	
 	if userResponse == "put":
+		
+		print "SUCCESS using \'",userResponse,"\' command."
+
 		# The buffer to all data received from the client.
 		fileData = ""
 
@@ -79,11 +82,12 @@ while True:
 
 		# Get the file data
 		fileData = recvAll(clientSock, fileSize)
-		
-		print "FILE DATA: ", fileData
-
+	
+		# Writing file data to a file called sent_data	
 		with open('sent_data.txt', 'w') as f:
 			f.write(fileData)
+
+		# Closing file and socket
 		f.close()
 		clientSock.close()
 
@@ -93,12 +97,15 @@ while True:
 		data = clientSock.recv(1024)		
 
 		fileName = str(data)
-
+	
+		# Reading file and sending it to client
 		f = open(fileName, 'r')
 		l = f.read(1024)
 		while True:
 			if data:
 				clientSock.send(l)
 			break
+		
+		# Closing file and socket
 		f.close()
 		clientSock.close()
