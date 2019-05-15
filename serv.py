@@ -30,6 +30,7 @@ serverSock.listen(2)
 
 print "Server Host:", serverHost
 
+# Function from Assignment1SampleCodes/Python/sendfile/sendfileserv.py
 def recvAll(sock, numBytes):
 
 	# Buffer
@@ -64,7 +65,8 @@ while True:
 	print "Accepted connection from client: ", addr
 	
 	userResponse = clientSock.recv(3)
-	
+
+	# Added writing file from Assignment1SampleCodes/Python/sendfile/sendfileserv.py	
 	if userResponse == "put":
 		
 		print "SUCCESS using \'",userResponse,"\' command."
@@ -92,7 +94,7 @@ while True:
 		fileData = recvAll(clientSock, fileSize)
 	
 		# Writing file data to a file called sent_data	
-		with open('sent_data.txt', 'w') as f:
+		with open('sent_file.txt', 'w') as f:
 			f.write(fileData)
 
 		# Closing file and socket
@@ -120,6 +122,7 @@ while True:
 	
 	elif userResponse == "ls":
 
-		print "SUCCESS using \'",userResponse,"\' commands"
+		print "SUCCESS using \'",userResponse,"\' command."
 		for line in commands.getstatusoutput('ls -l'):
 			clientSock.send(str(line))
+		clientSock.close()
