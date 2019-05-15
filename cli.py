@@ -84,12 +84,16 @@ while userCommand != "quit":
 		connectionSock.send(userCommand)
 		connectionSock.send(fileName)
 		
-		with open('received_file.txt', 'wb') as f:
+		numBytes = 0	
+		with open('received_'+fileName, 'wb') as f:
 			while True:
 				data = connectionSock.recv(1024)
+				f.write(data)
+				numBytes += len(data)
 				if not data:
 					break
-				f.write(data)
+		print "DOWNLOADED FILE: ", f,  "."
+		print "NUMBER OF BYTES:", numBytes
 		f.close()
 		connectionSock.close() 
 						
