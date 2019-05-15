@@ -19,7 +19,7 @@ serverPort = int(sys.argv[2])
 
 # Server Welcome
 print "======================================================================="
-print "Welcome to Adam\'s FTP server"
+print "Welcome to the FTP server"
 print "Commands are \'get <FILENAME>\' to download a file, \'put <FILENAME>\'"
 print "\'ls\' to list the files in the directory, and \'quit\' to exit"
 print "=======================================================================" 
